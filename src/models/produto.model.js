@@ -36,8 +36,8 @@ const Produto = Sequelize.define('Produto', {
                 msg: "O estoque não pode der negativo."
             }
         }
-    }
-    imge_url: {
+    },
+    image_url: {
         type: Datatypes.STRING(500),
         allowNull: true,
     validate: {

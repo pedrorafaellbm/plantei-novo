@@ -1,10 +1,11 @@
-import { Sequelize } from "../config/database";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const Produto = Sequelize.define('Produto', {
+export const Produto = sequelize.define('Produto', {
     nome: {
-        type: Datatypes.STRING(250),
+        type: DataTypes.STRING(250),
         allowNull: false,
-        VarDate: {
+        validate: {
             notEmpty: {msg: "O nome do produto é obrigatório."},
             len: {
                 arfs: [3, 250],
@@ -13,11 +14,11 @@ const Produto = Sequelize.define('Produto', {
         }
     },
     descricao: {
-        type: Datatypes.STRING(250),
+        type: DataTypes.STRING(250),
         allowNull: false
     },
     preco: {
-        type: Datatypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         validate: {
             isDecimal: {msg: "Preço Inválido."},
@@ -28,7 +29,7 @@ const Produto = Sequelize.define('Produto', {
         }
     },
     estoque: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
             min: {
@@ -38,7 +39,7 @@ const Produto = Sequelize.define('Produto', {
         }
     },
     image_url: {
-        type: Datatypes.STRING(500),
+        type: DataTypes.STRING(500),
         allowNull: true,
     validate: {
         isUrl: {

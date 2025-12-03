@@ -18,6 +18,30 @@ app.get('/', (req, res) => {
     
 });
 
+// buscar produtos
+
+app.get('/produtos', async (req, res) => {
+  const produtos = await Produto.findAll();
+  try {
+    res.status(201).json({
+      mensagem: "Sucesso ao  trazer os produtos!",
+      size: produtos.lenghth,
+      data: produtos,
+    });
+} catch (err) {
+    console.error(err);
+
+    // erros de validação do Sequelize
+    if (err.name === "SequelizeValidationError") {
+      return res.status(400).json({
+        erro: err.errors.map(e => e.message),
+      });
+    }
+
+    return res.status(500).json({ erro: "Erro ao buscar o produto" });
+  }
+});
+
 // crir um produto
 app.post('/produto', async (req, res) => {
   try {

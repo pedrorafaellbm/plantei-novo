@@ -6,7 +6,7 @@ export const Produto = sequelize.define('Produto', {
         type: DataTypes.STRING(250),
         allowNull: false,
         validate: {
-            notEmpty: {msg: "O nome do produto é obrigatório."},
+            notEmpty: { msg: "O nome do produto é obrigatório." },
             len: {
                 arfs: [3, 250],
                 msg: "O nome do produto deve ter entre 3 e 250 caracteres."
@@ -21,7 +21,7 @@ export const Produto = sequelize.define('Produto', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         validate: {
-            isDecimal: {msg: "Preço Inválido."},
+            isDecimal: { msg: "Preço Inválido." },
             min: {
                 args: [0],
                 msg: "O preço deve ser maior ou igual a zero."
@@ -41,12 +41,16 @@ export const Produto = sequelize.define('Produto', {
     image_url: {
         type: DataTypes.STRING(500),
         allowNull: true,
-    validate: {
-        isUrl: {
-            msg: "URL da imagem inválida."
+        validate: {
+            isUrl: {
+                msg: "URL da imagem inválida."
+            }
         }
-    }
-}
-},
+    },
+    categoria_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
 
-);
+    },
+
+});

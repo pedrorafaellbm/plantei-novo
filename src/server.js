@@ -4,6 +4,8 @@ import express from 'express';
 import './models/produto.js';
 import { sequelize } from './config/database.js';
 import produtosRoutes from './routes/produto.routes.js';
+import categoriaRoutes from './routes/categoria.routes.js';
+import marcaRoutes from './routes/marca.routes.js';
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT 
@@ -12,6 +14,8 @@ const app = express();
 
 app.use(express.json());
 app.use('/produtos', produtosRoutes);
+app.use('/categorias', categoriaRoutes);
+app.use('/marcas', marcaRoutes);
 
 try {
     await sequelize.authenticate();
@@ -25,6 +29,6 @@ try {
         console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`)
     );
 } catch (err) {
-    console.error("Erro ao iniciar o servidor:", error);
+    console.error("Erro ao iniciar o servidor:", err);
 }
 

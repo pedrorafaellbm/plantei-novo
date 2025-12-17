@@ -53,4 +53,8 @@ export const Produto = sequelize.define('Produto', {
 
     },
 
+    marca_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
 });

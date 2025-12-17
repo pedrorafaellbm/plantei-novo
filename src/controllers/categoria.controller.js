@@ -1,12 +1,10 @@
 import { Categoria } from "../models/Categoria.js";
-import { log } from "../utils/logger.js";
 
 export default {
   async listar(req, res) {
     try {
       const categorias = await Categoria.findAll();
 
-      log.info("Listando categorias...");
 
       return res.status(200).json({
         mensagem: "Categorias retornadas com sucesso!",
@@ -14,7 +12,6 @@ export default {
         data: categorias,
       });
     } catch (err) {
-      log.error(err);
       return res.status(500).json({ erro: "Erro ao buscar categorias" });
     }
   },
@@ -31,7 +28,6 @@ export default {
 
       return res.json(categoria);
     } catch (err) {
-      log.error(err);
       return res.status(500).json({ erro: "Erro no servidor" });
     }
   },
@@ -42,14 +38,12 @@ export default {
 
       const novo = await Categoria.create(payload);
 
-      log.success(`Categoria criada: ${novo.nome}`);
 
       return res.status(201).json({
         mensagem: "Categoria criada com sucesso!",
         data: novo,
       });
     } catch (err) {
-      log.error(err);
 
       if (err.name === "SequelizeValidationError") {
         return res.status(400).json({
@@ -79,7 +73,6 @@ export default {
         data: categoria,
       });
     } catch (err) {
-      log.error(err);
       return res.status(500).json({ erro: "Erro ao atualizar categoria" });
     }
   },
@@ -102,7 +95,6 @@ export default {
         data: categoria,
       });
     } catch (err) {
-      log.error(err);
       return res.status(500).json({ erro: "Erro ao atualizar parcialmente" });
     }
   },
@@ -121,7 +113,6 @@ export default {
 
       return res.json({ mensagem: "Categoria removida com sucesso!" });
     } catch (err) {
-      log.error(err);
       return res.status(500).json({ erro: "Erro ao remover categoria" });
     }
   },

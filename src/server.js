@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 // IMPORTAR MODELS AQUI
 import './models/produto.js';
@@ -13,9 +14,18 @@ const PORT = process.env.PORT
 const app = express();
 
 app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('API de Produtos funcionando 🚀');
+});
+
+app.use(cors());
+
 app.use('/produtos', produtosRoutes);
 app.use('/categorias', categoriaRoutes);
 app.use('/marcas', marcaRoutes);
+
+
 
 try {
     await sequelize.authenticate();

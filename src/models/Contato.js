@@ -1,14 +1,19 @@
-module.exports = (sequelize, DataTypes) => {
-  const Contato = sequelize.define("Contato", {
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    assunto: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  });
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/database.js';
 
-  return Contato;
-};
+const Contato = sequelize.define('Contato', {
+    nome: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    mensagem: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+    },
+});
+
+export default Contato;

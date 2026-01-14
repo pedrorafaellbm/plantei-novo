@@ -15,30 +15,36 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rotas
+// Rota raiz
 app.get('/', (req, res) => {
   res.send('API Vida Verde funcionando 🚀');
 });
+
+// Rotas
 app.use('/produtos', produtosRoutes);
 app.use('/categorias', categoriaRoutes);
 app.use('/marcas', marcaRoutes);
 app.use('/contatos', contatoRoutes);
 
-// ⬇⬇⬇ Coloque AQUI ⬇⬇⬇
+// Porta e host (Render fornece a porta, host deve ser 0.0.0.0)
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 
 // Conectar ao banco e subir o servidor
-try {
-  await sequelize.authenticate();
-  console.log("🎉 Conectado ao Postgres Neon com sucesso!");
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("🎉 Conectado ao Postgres Neon com sucesso!");
 
-  await sequelize.sync({ alter: true });
-  console.log("📦 Modelos sincronizados com o banco!");
+    await sequelize.sync({ alter: true });
+    console.log("📦 Modelos sincronizados com o banco!");
 
-  app.listen(PORT, HOST, () =>
-    console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`)
-  );
-} catch (err) {
-  console.error("❌ Erro ao iniciar o servidor:", err);
-}
+    app.listen(PORT, HOST, () =>
+      console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`)
+    );
+  } catch (err) {
+    console.error("❌ Erro ao iniciar o servidor:", err);
+  }
+};
+
+startServer();

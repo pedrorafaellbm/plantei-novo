@@ -1,4 +1,4 @@
-import { Contato } from "../models/contato.js";
+import { Contato } from "../models/Contato.js";
 
 export default {
   async listar(req, res) {

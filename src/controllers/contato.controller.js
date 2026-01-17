@@ -1,12 +1,9 @@
-import { Contato } from "/models/Contato.js";
-import { log } from "../utils/logger.js";
+import { Contato } from "../models/contato.js";
 
 export default {
   async listar(req, res) {
     try {
       const contatos = await Contato.findAll();
-
-      log.info("Listando contatos...");
 
       return res.status(200).json({
         mensagem: "Contatos retornados com sucesso!",
@@ -16,7 +13,7 @@ export default {
     } catch (err) {
       log.error(err);
       return res.status(500).json({ erro: "Erro ao buscar contatos" });
-    }
+    }console
   },
 
   async buscarPorId(req, res) {
@@ -31,7 +28,7 @@ export default {
 
       return res.json(contato);
     } catch (err) {
-      log.error(err);
+      console.error(err);
       return res.status(500).json({ erro: "Erro no servidor" });
     }
   },
@@ -42,14 +39,14 @@ export default {
 
       const novo = await Contato.create(payload);
 
-      log.success(`Contato criado: ${novo.nome}`);
+      console.log(`✅ Contato criado: ${novo.nome}`);
 
       return res.status(201).json({
         mensagem: "Contato criado com sucesso!",
         data: novo,
       });
     } catch (err) {
-      log.error(err);
+      console.error(err);
 
       if (err.name === "SequelizeValidationError") {
         return res.status(400).json({
@@ -79,7 +76,7 @@ export default {
         data: contato,
       });
     } catch (err) {
-      log.error(err);
+      console.error(err);
       return res.status(500).json({ erro: "Erro ao atualizar contato" });
     }
   },
@@ -102,7 +99,7 @@ export default {
         data: contato,
       });
     } catch (err) {
-      log.error(err);
+      console.error(err);
       return res.status(500).json({ erro: "Erro ao atualizar parcialmente" });
     }
   },
@@ -121,7 +118,7 @@ export default {
 
       return res.json({ mensagem: "Contato removido com sucesso!" });
     } catch (err) {
-      log.error(err);
+      console.error(err);
       return res.status(500).json({ erro: "Erro ao remover contato" });
     }
   },

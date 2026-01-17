@@ -1,19 +1,16 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv'
-
-dotenv.config()
-
-const BASE_URL = process.env.BASE_URL_DB;
 
 export const sequelize = new Sequelize(
-    BASE_URL,
-    {
-        dialect: 'postgres',
-        dialectOptions: {
-            ssl: {
-                require: true
-            }
-        },
-        loggin: true
-    }
-) // Example for postgres
+  process.env.DATABASE_URL,
+  {
+    dialect: 'postgres',
+    logging: true, // agora está escrito certo
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  }
+);
+    

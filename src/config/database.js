@@ -13,5 +13,5 @@ export const sequelize = new Sequelize(BASE_URL, {
             rejectUnauthorized: false,
         },
     },
-    logging: true,
+    logging: false,
 });

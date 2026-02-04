@@ -1,45 +1,22 @@
 import app from './app.js';
 import { sequelize } from './config/database.js';
+import { HOST } from './utils/ip.js';
 
-const HOST = '127.0.0.1';
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
+// const HOST = process.env.HOST || 'localhost';
 
-// INICIAR SERVIDOR + BANCO
-try {
-  await sequelize.authenticate();
-  console.log("🎉 Conectado ao Postgres Neon com sucesso!");
-
-  await sequelize.sync({ alter: true });
-  console.log("📦 Modelos sincronizados com o banco!");
-
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`);
-  });
-
-} catch (err) {
-  console.error("💥 Erro ao iniciar o servidor:", err);
-}
-
-// Buscar usuário por ID
-app.get('/usuario/:id', async (req, res) => {
+(async () => {
   try {
-    const { id } = req.params;
+    await sequelize.authenticate();
+    console.log('🎉 Banco conectado');
 
-    const usuario = await Usuario.findByPk(id);
+    await sequelize.sync({ alter: true });
+    console.log('📦 Modelos sincronizados');
 
-    if (!usuario) {
-      console.log(`❌ Usuário ID ${id} não encontrado`);
-      return res.status(404).json({ erro: "Usuário não encontrado" });
-    }
-
-    console.log(`🔎 Usuário ID ${id} encontrado`);
-    res.status(200).json({
-      mensagem: "Usuário encontrado com sucesso!",
-      data: usuario,
-    });
-
-  } catch (err) {
-    console.error("💥 Erro ao buscar usuário por ID:", err);
-    res.status(500).json({ erro: "Erro ao buscar usuário" });
+    app.listen(PORT, () =>
+        console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`)
+    );
+  } catch (error) {
+    console.error('💥 Erro ao iniciar:', error);
   }
-});
+})();

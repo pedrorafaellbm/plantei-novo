@@ -1,38 +1,43 @@
-module.exports = (sequelize, DataTypes) => {
-  const Usuario = sequelize.define("Usuario", {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
-    },
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/database.js';
 
-    nome: {
-      type: DataTypes.STRING,
-      allowNull: false
+export const Usuario = sequelize.define('Usuario', 
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        nome: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            validate: { isEmail: true },
+        },
+        senha: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        // adicionar coluna cpf com validação
+        cpf: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            validate: {
+                //validate apenas que tem que conter 11 caracteres sem os caracteres especiais
+                len: {
+                    args: [11, 11],
+                    msg: 'CPF deve conter 11 caracteres',
+                }
+            }
+        }
     },
-
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true
-      }
-    },
-
-    cpf: {
-      type: DataTypes.STRING(11),
-      allowNull: false,
-      unique: true
-    },
-
-    dataNascimento: {
-      type: DataTypes.DATEONLY,
-      allowNull: false
+    {
+        tableName: 'usuarios',
+        timestamps: true,
     }
-  }, {
-    tableName: "usuarios"
-  });
-
-  return Usuario;
-};
+);

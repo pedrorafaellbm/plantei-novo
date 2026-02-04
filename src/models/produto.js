@@ -1,52 +1,43 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database.js";
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/database.js';
 
-export const Produto = sequelize.define('produto', {
-    nome: {
-        type: DataTypes.STRING(150),
-        allowNull: false,
-        validate: {
-            //notNull: { msg: "Nome do produto é obrigatório" },  // <- ADICIONE ISTO
-            notEmpty: { msg: "Nome do produto é obrigatório"},
-            len: {
-                args: [3, 150],
-                msg: "Nome deve ter entre 3 e 150 caracteres"
+export const Usuario = sequelize.define('Usuario', 
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        nome: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            validate: { isEmail: true },
+        },
+        senha: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        // adicionar coluna cpf com validação
+        cpf: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            validate: {
+                //validate apenas que tem que conter 11 caracteres sem os caracteres especiais
+                len: {
+                    args: [11, 11],
+                    msg: 'CPF deve conter 11 caracteres',
+                }
             }
         }
     },
-    descricao: {
-        type: DataTypes.STRING(250),
-        allowNull: true
-    },
-    preco: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-            isDecimal: { msg: 'Preço inválido'},
-            min: {
-                args: [0],
-                msg: "Preço deve ser maior ou igual a zero."
-            }
-        }
-    },
-    estoque: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: {
-                args: [0],
-                msg: "Estoque não pode ser negativo."
-            }
-        }
-    },
-    image_url: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        validate: {
-            isUrl: {
-                msg: "URl da imagem inválida"
-            }
-        }
+    {
+        tableName: 'usuarios',
+        timestamps: true,
     }
-
-})
+);

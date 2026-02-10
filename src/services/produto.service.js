@@ -1,4 +1,4 @@
-/* import { Produto } from './models/Produto.js'
+import { Produto } from '../models/Produto.js'
 
 class ProdutoService {
   listar() {
@@ -10,4 +10,4 @@ class ProdutoService {
   }
 }
 
-export default new ProdutoService(); */
+export default new ProdutoService();

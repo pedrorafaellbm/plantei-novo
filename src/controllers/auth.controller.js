@@ -17,6 +17,8 @@ export default {
 
   async login(req, res) {
     try {
+      console.log('Requisição de login recebida:', req.body);
+      
       const { token, usuario } = await authService.autenticarUsuario(req.body);
 
       return res.json({

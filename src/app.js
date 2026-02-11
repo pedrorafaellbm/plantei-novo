@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from './config/cors.js';
+import cors from 'cors';
 import routes from './routes/index.js';
 import errorMiddleware from './middlewares/error.middleware.js';
 import helmet from 'helmet';
@@ -8,7 +8,7 @@ import helmet from 'helmet';
 const app = express();
 
 app.use(express.json());
-//app.use(cors());
+app.use(cors());
 
 // Configuração CSP personalizada
 app.use(helmet.contentSecurityPolicy({
@@ -20,6 +20,8 @@ app.use(helmet.contentSecurityPolicy({
   }
 }));
 
+
+// Rotas
 app.use('/api', routes);
 app.use(errorMiddleware);
 

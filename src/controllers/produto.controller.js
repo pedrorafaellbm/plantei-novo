@@ -1,3 +1,4 @@
+import produtoService from '../services/produto.service.js';
 import { log } from '../utils/logger.js';
 
 export default {

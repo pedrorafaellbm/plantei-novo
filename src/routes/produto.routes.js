@@ -1,7 +1,11 @@
 import { Router } from "express";
 import produtoController from "../controllers/produto.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = Router();
+
+// Todas as rotas de produto exigem autenticação/Token
+router.use(authMiddleware);
 
 router.get("/", produtoController.listar);
 router.get("/:id", produtoController.buscarPorId);

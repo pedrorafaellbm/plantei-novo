@@ -3,10 +3,13 @@ import { sequelize } from '../config/database.js';
 
 export const Usuario = sequelize.define('Usuario', 
     {
-        id: {
+       id_perfil: {
             type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+            allowNull: false,
+            references: {
+                model: 'perfis',
+                key: 'id'
+            }
         },
         nome: {
             type: DataTypes.STRING,

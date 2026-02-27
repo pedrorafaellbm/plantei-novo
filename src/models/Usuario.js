@@ -22,13 +22,11 @@ export const Usuario = sequelize.define('Usuario',
             type: DataTypes.STRING,
             allowNull: false,
         },
-        // adicionar coluna cpf com validação
         cpf: {
             type: DataTypes.STRING,
             unique: true,
             allowNull: false,
             validate: {
-                //validate apenas que tem que conter 11 caracteres sem os caracteres especiais
                 len: {
                     args: [11, 11],
                     msg: 'CPF deve conter 11 caracteres',

@@ -11,6 +11,12 @@ export default {
         email: usuario.email,
       });
     } catch (err) {
+      if (err?.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({ erro: 'Email ou CPF ja cadastrado' });
+      }
+      if (err?.name === 'SequelizeValidationError') {
+        return res.status(400).json({ erro: err.errors?.[0]?.message || 'Dados invalidos' });
+      }
       return res.status(400).json({ erro: err.message });
     }
   },

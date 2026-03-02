@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.post('/register', authController.register);  //cadastro de usuário com a senha criptografada e validação de email
-router.post('/login', authController.login); //confere token JWT ao usuário autenticado
-router.post('/logout', authController.logout);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.get('/me', authMiddleware, authController.me);
 
 export default router;

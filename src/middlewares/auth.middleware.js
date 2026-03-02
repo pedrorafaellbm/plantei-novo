@@ -1,19 +1,25 @@
 import jwt from 'jsonwebtoken';
-import jwtConfig from '../config/jwt.js';
 
-export default (req, res, next) => {
+export default function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader)
-    return res.status(401).json({ erro: 'Token não informado' });
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Token nao informado' });
+  }
 
-  const [, token] = authHeader.split(' ');
+  const [scheme, token] = authHeader.split(' ');
+  if (scheme !== 'Bearer' || !token) {
+    return res.status(401).json({ error: 'Formato de token invalido' });
+  }
 
   try {
-    const decoded = jwt.verify(token, jwtConfig.secret);
-    req.user = decoded;
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = {
+      id: decoded.sub,
+      role: decoded.role,
+    };
+    return next();
   } catch {
-    return res.status(401).json({ erro: 'Token inválido ou expirado' });
+    return res.status(401).json({ error: 'Token invalido ou expirado' });
   }
-};
+}

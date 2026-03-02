@@ -1,60 +1,79 @@
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import jwtConfig from '../config/jwt.js';
-import { Usuario } from '../models/Usuario.js';
-import { gerarHash, compararHash } from '../utils/hash.js';
+import { z } from 'zod';
+import * as userRepository from '../repositories/user.repository.js';
+import HttpError from '../utils/http-error.js';
 
-// Salva um novo usuario no banco de dados, encriptando a senha e retorna o usuario criado
+const registerSchema = z.object({
+  nome: z.string().trim().min(1),
+  email: z.string().trim().email(),
+  senha: z.string().min(6),
+  cpf: z.string().trim().min(11),
+});
+
+const loginSchema = z.object({
+  email: z.string().trim().email(),
+  senha: z.string().min(1),
+});
+
 export const registrarUsuario = async (payload) => {
-  const nome = payload?.nome ?? payload?.name;
-  const email = payload?.email;
-  const senha = payload?.senha ?? payload?.password;
-  const cpf = payload?.cpf ?? payload?.documento ?? payload?.document;
+  const parsed = registerSchema.parse(payload);
+  const nome = parsed.nome.trim();
+  const email = parsed.email.toLowerCase();
+  const cpf = parsed.cpf.replace(/\D/g, '');
 
-  if (!nome || !email || !senha || !cpf) {
-    throw new Error('Campos obrigatorios: nome, email, senha e cpf');
+  if (cpf.length !== 11) {
+    throw new HttpError(400, 'CPF invalido');
   }
 
-  const normalizedNome = String(nome).trim();
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const normalizedCpf = String(cpf).replace(/\D/g, '');
+  const existenteEmail = await userRepository.findByEmail(email);
+  if (existenteEmail) {
+    throw new HttpError(409, 'Email ja cadastrado');
+  }
 
-  if (normalizedCpf.length !== 11) throw new Error('CPF invalido');
+  const existenteCpf = await userRepository.findByCpf(cpf);
+  if (existenteCpf) {
+    throw new HttpError(409, 'CPF ja cadastrado');
+  }
 
-  const existenteEmail = await Usuario.findOne({ where: { email: normalizedEmail } });
-  if (existenteEmail) throw new Error('Email ja cadastrado');
+  const senhaHash = await bcrypt.hash(parsed.senha, 10);
 
-  const existenteCpf = await Usuario.findOne({ where: { cpf: normalizedCpf } });
-  if (existenteCpf) throw new Error('CPF ja cadastrado');
-
-  const senhaHash = await gerarHash(senha);
-
-  return Usuario.create({
-    nome: normalizedNome,
-    email: normalizedEmail,
-    senha: senhaHash,
-    cpf: normalizedCpf,
+  return userRepository.create({
+    nome,
+    email,
+    cpf,
+    senhaHash,
+    role: 'customer',
   });
 };
 
-export const autenticarUsuario = async ({ email, senha }) => {
-  // Buscar usuario pelo email, apenas um usuario ja deve existir apenas um por email
-  const usuario = await Usuario.findOne({ where: { email } });
+export const autenticarUsuario = async (payload) => {
+  const parsed = loginSchema.parse(payload);
+  const email = parsed.email.toLowerCase();
 
-  // Se nao encontrar ou a senha for invalida, lanca erro
-  if (!usuario) throw new Error('Usuario ou senha invalidos');
+  const usuario = await userRepository.findByEmail(email);
+  if (!usuario) {
+    throw new HttpError(401, 'Usuario ou senha invalidos');
+  }
 
-  // Verificar se a senha bate com o que foi informado no campo do login
-  const senhaValida = await compararHash(senha, usuario.senha);
+  const senhaValida = await bcrypt.compare(parsed.senha, usuario.senhaHash);
+  if (!senhaValida) {
+    throw new HttpError(401, 'Usuario ou senha invalidos');
+  }
 
-  // Se a senha nao for valida, lanca erro
-  if (!senhaValida) throw new Error('Usuario ou senha invalidos');
-
-  // Gerar um token JWT para o usuario autenticado
   const token = jwt.sign(
-    { id: usuario.id, email: usuario.email },
-    jwtConfig.secret,
-    { expiresIn: jwtConfig.expiresIn }
+    { sub: usuario.id, role: usuario.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
   );
 
   return { token, usuario };
+};
+
+export const buscarUsuarioAutenticado = async (userId) => {
+  const usuario = await userRepository.findById(userId);
+  if (!usuario) {
+    throw new HttpError(404, 'Usuario nao encontrado');
+  }
+  return usuario;
 };

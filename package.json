@@ -10,11 +10,13 @@
     "db:seed": "node ./src/scripts/seed-admin.js",
     "test": "echo \"No automated tests configured\""
   },
+  "engines": {
+    "node": ">=20"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jsonwebtoken": "^9.0.3",
     "nodemon": "^3.1.11"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.0",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",

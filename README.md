@@ -26,6 +26,28 @@ API REST com Node.js + Express + Sequelize para autenticacao e futuras funcional
 
 Base URL: `http://localhost:3000/api`
 
+## Deploy no Render (backend)
+
+Crie um `Web Service` no Render apontando para este repositorio e use:
+
+- Build Command: `npm install`
+- Start Command: `npm start`
+
+Defina as variaveis de ambiente:
+
+- `NODE_ENV=production`
+- `DATABASE_URL=postgresql://...`
+- `JWT_SECRET=...`
+- `CORS_ORIGIN=https://seu-front.vercel.app` (ou lista separada por virgula)
+- `DB_SSL=true` (recomendado em producao)
+- `CLOUD_NAME=...`
+- `API_KEY=...`
+- `API_SECRET=...`
+
+Health Check Path no Render:
+
+- `/api`
+
 ## Seed admin
 
 - email: `admin@vidaverde.com`

@@ -1,28 +1,27 @@
 # Vida Verde Backend API
 
-API REST com Node.js + Express + Prisma para autenticação e futuras funcionalidades administrativas.
+API REST com Node.js + Express + Sequelize para autenticacao e futuras funcionalidades administrativas.
 
 ## Requisitos
 
 - Node.js 20+
-- PostgreSQL (Neon)
+- PostgreSQL (Neon ou local)
 
 ## Setup
 
 1. Copie `.env.example` para `.env` e preencha:
-   - `DATABASE_URL`
+   - `DATABASE_URL` (ou `BASE_URL_DB`)
    - `JWT_SECRET`
    - `PORT`
    - `CORS_ORIGIN`
-2. Instale dependências:
+   - `CLOUD_NAME`
+   - `API_KEY`
+   - `API_SECRET`
+2. Instale dependencias:
    - `npm install`
-3. Gere o client Prisma:
-   - `npm run prisma:generate`
-4. Rode migrações:
-   - `npm run prisma:migrate -- --name init`
-5. Rode seed:
-   - `npm run prisma:seed`
-6. Suba a API:
+3. Rode seed:
+   - `npm run db:seed`
+4. Suba a API:
    - `npm run dev`
 
 Base URL: `http://localhost:3000/api`
@@ -52,7 +51,7 @@ Saida `201`:
 
 ```json
 {
-  "id": "clx...",
+  "id": "uuid",
   "nome": "Maria Silva",
   "email": "maria@exemplo.com"
 }
@@ -75,7 +74,7 @@ Saida `200`:
 {
   "token": "<jwt>",
   "usuario": {
-    "id": "clx...",
+    "id": "uuid",
     "nome": "Maria Silva",
     "email": "maria@exemplo.com",
     "role": "customer"
@@ -94,7 +93,7 @@ Saida `200`:
 ```json
 {
   "usuario": {
-    "id": "clx...",
+    "id": "uuid",
     "nome": "Maria Silva",
     "email": "maria@exemplo.com",
     "role": "customer"
@@ -102,37 +101,20 @@ Saida `200`:
 }
 ```
 
-## Erros
+### GET `/api/products`
 
-Formato consistente:
+Lista os produtos com `imageUrl`.
 
-```json
-{
-  "error": "mensagem"
-}
-```
+### POST `/api/admin/products`
 
-## Curl
+Protegida para `admin`.
 
-Registro:
+Formato: `multipart/form-data`
 
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d "{\"nome\":\"Maria Silva\",\"email\":\"maria@exemplo.com\",\"senha\":\"Senha@123\",\"cpf\":\"12345678901\"}"
-```
+- `nome` (string)
+- `descricao` (string, opcional)
+- `preco` (number)
+- `estoque` (number)
+- `image` (file, opcional)
 
-Login:
-
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"maria@exemplo.com\",\"senha\":\"Senha@123\"}"
-```
-
-Me:
-
-```bash
-curl http://localhost:3000/api/auth/me \
-  -H "Authorization: Bearer <jwt>"
-```
+Se `image` for enviada, a API faz upload no Cloudinary e salva `secure_url` em `imageUrl`.

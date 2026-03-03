@@ -1,12 +1,13 @@
 import { DataTypes } from 'sequelize';
+import { randomUUID } from 'node:crypto';
 import { sequelize } from '../config/database.js';
 
 export const Usuario = sequelize.define('Usuario', 
     {
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue: () => randomUUID(),
         },
         nome: {
             type: DataTypes.STRING,
@@ -18,7 +19,7 @@ export const Usuario = sequelize.define('Usuario',
             allowNull: false,
             validate: { isEmail: true },
         },
-        senha: {
+        senhaHash: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -32,10 +33,19 @@ export const Usuario = sequelize.define('Usuario',
                     msg: 'CPF deve conter 11 caracteres',
                 }
             }
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'customer',
+            validate: {
+                isIn: [['customer', 'admin']]
+            }
         }
     },
     {
-        tableName: 'usuarios',
+        tableName: 'User',
+        freezeTableName: true,
         timestamps: true,
     }
 );

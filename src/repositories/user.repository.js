@@ -1,21 +1,17 @@
-import prisma from '../config/prisma.js';
+import { Usuario } from '../models/Usuario.js';
 
 export const findByEmail = (email) =>
-  prisma.user.findUnique({
+  Usuario.findOne({
     where: { email },
   });
 
 export const findByCpf = (cpf) =>
-  prisma.user.findUnique({
+  Usuario.findOne({
     where: { cpf },
   });
 
 export const findById = (id) =>
-  prisma.user.findUnique({
-    where: { id },
-  });
+  Usuario.findByPk(id);
 
 export const create = (data) =>
-  prisma.user.create({
-    data,
-  });
+  Usuario.create(data);

@@ -7,29 +7,24 @@
   "scripts": {
     "dev": "nodemon ./src/server.js",
     "start": "node ./src/server.js",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed",
+    "db:seed": "node ./src/scripts/seed-admin.js",
     "test": "echo \"No automated tests configured\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "prisma": {
-    "seed": "node prisma/seed.js"
-  },
   "devDependencies": {
     "jsonwebtoken": "^9.0.3",
-    "nodemon": "^3.1.11",
-    "prisma": "^6.5.0"
+    "nodemon": "^3.1.11"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.6.1",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "multer": "^2.1.0",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",

@@ -12,6 +12,8 @@ router.use('/auth', authRoutes);
 router.use('/products', produtoRoutes);
 router.use('/produtos', produtoRoutes);
 router.use('/contatos', contatoRoutes);
+router.use('/contato', contatoRoutes);
+router.use('/contact', contatoRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

@@ -1,6 +1,14 @@
 import contatoService from '../services/contato.service.js';
 import { log } from '../utils/logger.js';
 
+const normalizeContatoPayload = (body = {}) => {
+  const nome = body.nome || body.assunto || 'Contato do site';
+  const email = body.email;
+  const mensagem = body.mensagem || body.assunto || '';
+
+  return { nome, email, mensagem };
+};
+
 export default {
   async listar(req, res, next) {
     try {
@@ -25,7 +33,7 @@ export default {
       const contato = await contatoService.buscarPorId(id);
 
       if (!contato) {
-        return res.status(404).json({ erro: 'Contato não encontrado' });
+        return res.status(404).json({ erro: 'Contato nao encontrado' });
       }
 
       return res.json(contato);
@@ -37,7 +45,8 @@ export default {
 
   async criar(req, res, next) {
     try {
-      const novo = await contatoService.criar(req.body);
+      const payload = normalizeContatoPayload(req.body);
+      const novo = await contatoService.criar(payload);
 
       log.success(`[Contato] Criado: ${novo.nome}`);
 
@@ -58,7 +67,7 @@ export default {
       const contato = await contatoService.atualizar(id, req.body);
 
       if (!contato) {
-        return res.status(404).json({ erro: 'Contato não encontrado' });
+        return res.status(404).json({ erro: 'Contato nao encontrado' });
       }
 
       return res.json({
@@ -78,7 +87,7 @@ export default {
       const contato = await contatoService.atualizar(id, req.body);
 
       if (!contato) {
-        return res.status(404).json({ erro: 'Contato não encontrado' });
+        return res.status(404).json({ erro: 'Contato nao encontrado' });
       }
 
       return res.json({
@@ -98,7 +107,7 @@ export default {
       const removido = await contatoService.remover(id);
 
       if (!removido) {
-        return res.status(404).json({ erro: 'Contato não encontrado' });
+        return res.status(404).json({ erro: 'Contato nao encontrado' });
       }
 
       return res.json({

@@ -41,6 +41,11 @@ export const Usuario = sequelize.define('Usuario',
             validate: {
                 isIn: [['customer', 'admin']]
             }
+        },
+        avatarUrl: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            field: 'avatar_url',
         }
     },
     {

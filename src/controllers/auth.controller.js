@@ -7,6 +7,7 @@ export default {
       id: usuario.id,
       nome: usuario.nome,
       email: usuario.email,
+      avatar_url: usuario.avatarUrl || null,
     });
   },
 
@@ -19,6 +20,7 @@ export default {
         nome: usuario.nome,
         email: usuario.email,
         role: usuario.role,
+        avatar_url: usuario.avatarUrl || null,
       },
     });
   },
@@ -31,6 +33,7 @@ export default {
         nome: usuario.nome,
         email: usuario.email,
         role: usuario.role,
+        avatar_url: usuario.avatarUrl || null,
       },
     });
   },

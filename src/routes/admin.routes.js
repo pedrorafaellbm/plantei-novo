@@ -10,6 +10,7 @@ const router = Router();
 router.use(verifyToken, verifyAdmin);
 
 router.get('/users', adminController.listarUsuarios);
+router.delete('/users/:id', adminController.removerUsuario);
 router.patch('/users/:id/role', adminController.atualizarRole);
 router.post('/products', upload.single('image'), adminProductController.create);
 router.patch('/products/:id', upload.single('image'), adminProductController.update);

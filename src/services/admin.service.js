@@ -19,3 +19,15 @@ export const atualizarRoleUsuario = async (id, payload) => {
   await usuario.update({ role });
   return usuario;
 };
+
+export const removerUsuario = async (adminId, usuarioId) => {
+  if (String(adminId) === String(usuarioId)) {
+    return { status: 'self_delete_blocked' };
+  }
+
+  const usuario = await Usuario.findByPk(usuarioId);
+  if (!usuario) return { status: 'not_found' };
+
+  await usuario.destroy();
+  return { status: 'deleted' };
+};

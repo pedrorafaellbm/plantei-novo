@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller.js';
-import authMiddleware from '../middlewares/auth.middleware.js';
+import verifyToken from '../middlewares/verifyToken.js';
 
 const router = Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.get('/me', authMiddleware, authController.me);
+router.get('/me', verifyToken, authController.me);
 
 export default router;

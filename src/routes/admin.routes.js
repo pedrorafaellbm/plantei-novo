@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import adminController from '../controllers/admin.controller.js';
 import adminProductController from '../controllers/admin-product.controller.js';
-import authMiddleware from '../middlewares/auth.middleware.js';
-import roleMiddleware from '../middlewares/role.middleware.js';
+import verifyToken from '../middlewares/verifyToken.js';
+import verifyAdmin from '../middlewares/verifyAdmin.js';
 import { upload } from '../middleware/upload.js';
 
 const router = Router();
 
-router.use(authMiddleware, roleMiddleware('admin'));
+router.use(verifyToken, verifyAdmin);
 
 router.get('/users', adminController.listarUsuarios);
 router.patch('/users/:id/role', adminController.atualizarRole);

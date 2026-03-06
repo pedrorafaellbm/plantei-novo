@@ -50,7 +50,7 @@ export default {
 
       log.success(`[Contato] Criado: ${novo.nome}`);
 
-      return res.status(201).json({
+      return res.status(200).json({
         mensagem: 'Contato criado com sucesso!',
         data: novo,
       });

@@ -4,6 +4,7 @@ import { sequelize } from './config/database.js';
 import './models/Usuario.js';
 import './models/Contato.js';
 import './models/produto.js';
+import './models/Favorito.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,6 +25,15 @@ async function bootstrap() {
   await sequelize.query(`
     ALTER TABLE produtos
     ADD COLUMN IF NOT EXISTS "imageUrl" TEXT;
+  `);
+  await sequelize.query(`
+    CREATE TABLE IF NOT EXISTS favoritos (
+      id SERIAL PRIMARY KEY,
+      usuario_id TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+      produto_id INTEGER NOT NULL REFERENCES produtos(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      UNIQUE(usuario_id, produto_id)
+    );
   `);
   await sequelize.query(`
     DO $$

@@ -1,4 +1,11 @@
 import { Contato } from '../models/Contato.js';
+import { z } from 'zod';
+
+const contatoSchema = z.object({
+  nome: z.string().trim().min(1, 'Nome obrigatorio'),
+  email: z.string().trim().email('Email obrigatorio'),
+  mensagem: z.string().trim().min(1, 'Mensagem obrigatoria'),
+});
 
 class ContatoService {
   listar() {
@@ -10,7 +17,8 @@ class ContatoService {
   }
 
   criar(payload) {
-    return Contato.create(payload);
+    const parsed = contatoSchema.parse(payload);
+    return Contato.create(parsed);
   }
 
   async atualizar(id, payload) {

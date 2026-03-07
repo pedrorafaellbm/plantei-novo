@@ -106,8 +106,13 @@ async function bootstrap() {
     CREATE TABLE IF NOT EXISTS categories (
       id SERIAL PRIMARY KEY,
       name VARCHAR(120) NOT NULL UNIQUE,
+      description TEXT,
       created_at TIMESTAMP DEFAULT NOW()
     );
+  `);
+  await sequelize.query(`
+    ALTER TABLE categories
+    ADD COLUMN IF NOT EXISTS description TEXT;
   `);
   await sequelize.query(`
     CREATE TABLE IF NOT EXISTS banners (
@@ -147,8 +152,12 @@ async function bootstrap() {
     END $$;
   `);
   await sequelize.query(`
-    INSERT INTO categories (name)
-    VALUES ('Plantas'), ('Vasos'), ('Sementes'), ('Fertilizantes')
+    INSERT INTO categories (name, description)
+    VALUES
+      ('Plantas', 'Categoria padrao da loja'),
+      ('Vasos', 'Vasos decorativos e utilitarios'),
+      ('Sementes', 'Sementes para cultivo'),
+      ('Fertilizantes', 'Adubos e fertilizantes')
     ON CONFLICT (name) DO NOTHING;
   `);
   await sequelize.query(`

@@ -3,24 +3,42 @@ import { Produto } from '../models/produto.js';
 import { Category } from '../models/Category.js';
 import HttpError from '../utils/http-error.js';
 
-const categoriasPermitidas = ['Plantas', 'Vasos', 'Sementes', 'Fertilizantes'];
-
 const createSchema = z.object({
   nome: z.string().trim().min(1, 'Nome e obrigatorio'),
   descricao: z.string().trim().optional().or(z.literal('')),
   preco: z.coerce.number().min(0, 'Preco invalido'),
   estoque: z.coerce.number().int().min(0, 'Estoque invalido'),
   imageUrl: z.string().trim().url('ImageUrl invalida').optional().or(z.literal('')),
-  categoria: z
-    .string()
-    .trim()
-    .transform((value) => (value ? value : 'Plantas'))
-    .refine((value) => categoriasPermitidas.includes(value), 'Categoria invalida')
-    .optional(),
+  categoria: z.string().trim().optional().or(z.literal('')),
+  categoryId: z.coerce.number().int().positive().optional(),
   category_id: z.coerce.number().int().positive().optional(),
 });
 
 const patchSchema = createSchema.partial();
+
+const resolveCategory = async (parsed) => {
+  const candidateId = parsed.category_id ?? parsed.categoryId;
+  const candidateName = parsed.categoria?.trim();
+
+  if (candidateId) {
+    const category = await Category.findByPk(candidateId);
+    if (!category) throw new HttpError(400, 'Categoria inexistente');
+    return { categoria: category.name, categoryId: category.id };
+  }
+
+  if (candidateName) {
+    const category = await Category.findOne({ where: { name: candidateName } });
+    if (!category) throw new HttpError(400, 'Categoria inexistente');
+    return { categoria: category.name, categoryId: category.id };
+  }
+
+  const fallbackCategory = await Category.findOne({ order: [['id', 'ASC']] });
+  if (fallbackCategory) {
+    return { categoria: fallbackCategory.name, categoryId: fallbackCategory.id };
+  }
+
+  return { categoria: 'Plantas', categoryId: null };
+};
 
 class ProdutoService {
   async listar() {
@@ -33,21 +51,14 @@ class ProdutoService {
 
   async criar(payload) {
     const parsed = createSchema.parse(payload);
-    let categoryId = parsed.category_id;
-    let categoria = parsed.categoria || 'Plantas';
-    if (categoryId) {
-      const category = await Category.findByPk(categoryId);
-      if (!category) throw new HttpError(400, 'Categoria inexistente');
-      categoria = category.name;
-    }
+    const categoryPayload = await resolveCategory(parsed);
     return Produto.create({
       nome: parsed.nome,
       descricao: parsed.descricao || null,
       preco: parsed.preco,
       estoque: parsed.estoque,
       imageUrl: parsed.imageUrl || null,
-      categoria,
-      categoryId: categoryId || null,
+      ...categoryPayload,
     });
   }
 
@@ -57,12 +68,12 @@ class ProdutoService {
 
     const parsed = partial ? patchSchema.parse(payload) : createSchema.parse(payload);
     let categoryPayload = {};
-    if (parsed.category_id !== undefined) {
-      const category = await Category.findByPk(parsed.category_id);
-      if (!category) throw new HttpError(400, 'Categoria inexistente');
-      categoryPayload = { categoryId: category.id, categoria: category.name };
-    } else if (parsed.categoria !== undefined) {
-      categoryPayload = { categoria: parsed.categoria || 'Plantas' };
+    if (
+      parsed.category_id !== undefined ||
+      parsed.categoryId !== undefined ||
+      parsed.categoria !== undefined
+    ) {
+      categoryPayload = await resolveCategory(parsed);
     }
     await produto.update({
       ...(parsed.nome !== undefined ? { nome: parsed.nome } : {}),

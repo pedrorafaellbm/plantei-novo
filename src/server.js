@@ -10,6 +10,7 @@ import './models/Address.js';
 import './models/Category.js';
 import './models/Banner.js';
 import './models/Contact.js';
+import './models/StoreInfo.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,6 +40,10 @@ async function bootstrap() {
   await sequelize.query(`
     ALTER TABLE produtos
     ADD COLUMN IF NOT EXISTS category_id INTEGER;
+  `);
+  await sequelize.query(`
+    ALTER TABLE produtos
+    ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT false;
   `);
   await sequelize.query(`
     DO $$
@@ -121,8 +126,13 @@ async function bootstrap() {
       description TEXT,
       image_url TEXT NOT NULL,
       link TEXT,
+      button_text VARCHAR(120),
       created_at TIMESTAMP DEFAULT NOW()
     );
+  `);
+  await sequelize.query(`
+    ALTER TABLE banners
+    ADD COLUMN IF NOT EXISTS button_text VARCHAR(120);
   `);
   await sequelize.query(`
     CREATE TABLE IF NOT EXISTS contacts (
@@ -131,6 +141,18 @@ async function bootstrap() {
       email VARCHAR(150) NOT NULL,
       message VARCHAR(500) NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
+    );
+  `);
+  await sequelize.query(`
+    CREATE TABLE IF NOT EXISTS store_info (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(160) NOT NULL DEFAULT 'Sobre a Loja',
+      description TEXT,
+      mission TEXT,
+      quality TEXT,
+      delivery TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
     );
   `);
   await sequelize.query(`
@@ -159,6 +181,16 @@ async function bootstrap() {
       ('Sementes', 'Sementes para cultivo'),
       ('Fertilizantes', 'Adubos e fertilizantes')
     ON CONFLICT (name) DO NOTHING;
+  `);
+  await sequelize.query(`
+    INSERT INTO store_info (title, description, mission, quality, delivery)
+    SELECT
+      'Sobre a Loja',
+      'Somos uma loja dedicada ao cultivo e venda de plantas de qualidade, com foco em praticidade, curadoria e atendimento humano.',
+      'Conectar pessoas a natureza com produtos selecionados, informacao clara e uma compra simples.',
+      'Cada item e escolhido para garantir boa adaptacao, visual bonito e excelente apresentacao.',
+      'Despacho rapido, embalagens seguras e acompanhamento atencioso para cada pedido.'
+    WHERE NOT EXISTS (SELECT 1 FROM store_info);
   `);
   await sequelize.query(`
     DO $$

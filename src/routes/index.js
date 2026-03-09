@@ -12,6 +12,7 @@ import addressRoutes from './address.routes.js';
 import categoryRoutes from './category.routes.js';
 import bannerRoutes from './banner.routes.js';
 import contactRoutes from './contact.routes.js';
+import storeInfoRoutes from './store-info.routes.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/address', addressRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/banners', bannerRoutes);
 router.use('/contact', contactRoutes);
+router.use('/store-info', storeInfoRoutes);
 
 export default router;

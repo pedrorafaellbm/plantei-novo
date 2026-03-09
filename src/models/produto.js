@@ -43,6 +43,12 @@ export const Produto = sequelize.define(
       allowNull: true,
       field: 'category_id',
     },
+    featured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'featured',
+    },
   },
   {
     tableName: 'produtos',

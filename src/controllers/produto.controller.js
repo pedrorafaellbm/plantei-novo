@@ -4,7 +4,22 @@ import { log } from '../utils/logger.js';
 export default {
   async listar(req, res, next) {
     try {
-      const produtos = await produtoService.listar();
+      const produtos = await produtoService.listar({ search: req.query.search });
+      return res.status(200).json({ data: produtos, size: produtos.length });
+    } catch (err) {
+      log.error(err);
+      return next(err);
+    }
+  },
+
+  async listarDestaques(req, res, next) {
+    try {
+      let produtos = await produtoService.listar({ featured: true });
+
+      if (!produtos.length) {
+        produtos = await produtoService.listar({ limit: 6 });
+      }
+
       return res.status(200).json({ data: produtos, size: produtos.length });
     } catch (err) {
       log.error(err);

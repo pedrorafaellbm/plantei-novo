@@ -6,6 +6,7 @@ import verifyAdmin from '../middlewares/verifyAdmin.js';
 const router = Router();
 
 router.get('/', produtoController.listar);
+router.get('/featured', produtoController.listarDestaques);
 router.get('/:id', produtoController.buscarPorId);
 router.post('/', verifyToken, verifyAdmin, produtoController.criar);
 router.put('/:id', verifyToken, verifyAdmin, produtoController.atualizar);

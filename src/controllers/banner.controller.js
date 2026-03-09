@@ -3,6 +3,18 @@ import cloudinary from '../config/cloudinary.js';
 import { createBanner, listBanners, removeBanner, updateBanner } from '../services/banner.service.js';
 import HttpError from '../utils/http-error.js';
 
+const mapBanner = (banner) => ({
+  id: banner.id,
+  title: banner.title,
+  description: banner.description,
+  image_url: banner.imageUrl,
+  imageUrl: banner.imageUrl,
+  link: banner.link,
+  button_text: banner.buttonText || null,
+  buttonText: banner.buttonText || null,
+  created_at: banner.createdAt,
+});
+
 const removeTempFile = async (filePath) => {
   if (!filePath) return;
   try {
@@ -29,7 +41,7 @@ const uploadToCloudinary = async (filePath) => {
 export default {
   async list(req, res) {
     const data = await listBanners();
-    return res.status(200).json({ data, size: data.length });
+    return res.status(200).json({ data: data.map(mapBanner), size: data.length });
   },
 
   async create(req, res, next) {
@@ -40,7 +52,7 @@ export default {
         imageUrl = await uploadToCloudinary(req.file.path);
       }
       const data = await createBanner({ ...req.body, image_url: imageUrl });
-      return res.status(201).json({ data });
+      return res.status(201).json({ data: mapBanner(data) });
     } catch (err) {
       return next(err);
     } finally {
@@ -57,7 +69,7 @@ export default {
       }
       const data = await updateBanner(req.params.id, { ...req.body, ...(imageUrl ? { image_url: imageUrl } : {}) });
       if (!data) return res.status(404).json({ error: 'Banner not found' });
-      return res.status(200).json({ data });
+      return res.status(200).json({ data: mapBanner(data) });
     } catch (err) {
       return next(err);
     } finally {

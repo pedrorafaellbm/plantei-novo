@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { z } from 'zod';
 import { Produto } from '../models/produto.js';
 import { Category } from '../models/Category.js';
@@ -12,6 +13,15 @@ const createSchema = z.object({
   categoria: z.string().trim().optional().or(z.literal('')),
   categoryId: z.coerce.number().int().positive().optional(),
   category_id: z.coerce.number().int().positive().optional(),
+  featured: z
+    .union([z.boolean(), z.string().trim()])
+    .optional()
+    .transform((value) => {
+      if (value === undefined) return undefined;
+      if (typeof value === 'boolean') return value;
+      const normalized = value.toLowerCase();
+      return ['true', '1', 'sim', 'yes', 'on'].includes(normalized);
+    }),
 });
 
 const patchSchema = createSchema.partial();
@@ -41,8 +51,25 @@ const resolveCategory = async (parsed) => {
 };
 
 class ProdutoService {
-  async listar() {
-    return Produto.findAll({ include: [{ model: Category, as: 'category', attributes: ['id', 'name'], required: false }], order: [['createdAt', 'DESC']] });
+  async listar(filters = {}) {
+    const where = {};
+
+    if (filters.search?.trim()) {
+      where.nome = {
+        [Op.iLike]: `%${filters.search.trim()}%`,
+      };
+    }
+
+    if (filters.featured === true) {
+      where.featured = true;
+    }
+
+    return Produto.findAll({
+      where,
+      include: [{ model: Category, as: 'category', attributes: ['id', 'name'], required: false }],
+      order: [['createdAt', 'DESC']],
+      limit: filters.limit,
+    });
   }
 
   async buscarPorId(id) {
@@ -58,6 +85,7 @@ class ProdutoService {
       preco: parsed.preco,
       estoque: parsed.estoque,
       imageUrl: parsed.imageUrl || null,
+      featured: parsed.featured ?? false,
       ...categoryPayload,
     });
   }
@@ -85,6 +113,7 @@ class ProdutoService {
       ...(parsed.imageUrl !== undefined
         ? { imageUrl: parsed.imageUrl === '' ? null : parsed.imageUrl }
         : {}),
+      ...(parsed.featured !== undefined ? { featured: parsed.featured } : {}),
       ...categoryPayload,
     });
 

@@ -9,6 +9,7 @@ export const Banner = sequelize.define(
     description: { type: DataTypes.TEXT, allowNull: true },
     imageUrl: { type: DataTypes.TEXT, allowNull: false, field: 'image_url' },
     link: { type: DataTypes.TEXT, allowNull: true },
+    buttonText: { type: DataTypes.STRING(120), allowNull: true, field: 'button_text' },
     createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
   },
   {

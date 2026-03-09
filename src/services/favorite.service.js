@@ -33,7 +33,7 @@ class FavoriteService {
   async listByUser(userId) {
     return Favorite.findAll({
       where: { userId },
-      include: [{ model: Produto, as: 'product', attributes: ['id', 'nome', 'descricao', 'preco', 'estoque', 'imageUrl', 'categoria', 'categoryId'] }],
+      include: [{ model: Produto, as: 'product', attributes: ['id', 'nome', 'descricao', 'preco', 'estoque', 'imageUrl', 'categoria', 'categoryId', 'featured'] }],
       order: [['createdAt', 'DESC']],
     });
   }

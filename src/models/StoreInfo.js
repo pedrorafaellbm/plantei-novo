@@ -26,5 +26,6 @@ export const StoreInfo = sequelize.define(
   {
     tableName: 'store_info',
     freezeTableName: true,
+    timestamps: true,
   }
 );

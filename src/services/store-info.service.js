@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { StoreInfo } from '../models/StoreInfo.js';
+import { listCards } from './store-info-card.service.js';
 
 const defaultContent = {
   title: 'Sobre a Loja',
@@ -29,7 +30,8 @@ const ensureStoreInfo = async () => {
 
 export const getStoreInfo = async () => {
   const info = await ensureStoreInfo();
-  return info;
+  const cards = await listCards(info.id);
+  return { ...info.get({ plain: true }), cards };
 };
 
 export const updateStoreInfo = async (payload) => {

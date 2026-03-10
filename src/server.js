@@ -151,6 +151,17 @@ async function bootstrap() {
       mission TEXT,
       quality TEXT,
       delivery TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+  );
+  `);
+  await sequelize.query(`
+    CREATE TABLE IF NOT EXISTS store_info_cards (
+      id SERIAL PRIMARY KEY,
+      store_info_id INTEGER NOT NULL REFERENCES store_info(id) ON DELETE CASCADE,
+      title VARCHAR(120) NOT NULL,
+      body TEXT NOT NULL,
+      position INTEGER NOT NULL DEFAULT 0,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );

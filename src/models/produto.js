@@ -43,6 +43,12 @@ export const Produto = sequelize.define(
       allowNull: true,
       field: 'category_id',
     },
+    careLevel: {
+      type: DataTypes.STRING(60),
+      allowNull: false,
+      defaultValue: 'Facil',
+      field: 'care_level',
+    },
     featured: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

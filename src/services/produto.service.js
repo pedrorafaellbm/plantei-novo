@@ -22,9 +22,33 @@ const createSchema = z.object({
       const normalized = value.toLowerCase();
       return ['true', '1', 'sim', 'yes', 'on'].includes(normalized);
     }),
+  careLevel: z.string().trim().optional().or(z.literal('')),
 });
 
 const patchSchema = createSchema.partial();
+
+const normalizeProductPayload = (payload = {}) => {
+  const normalized = { ...payload };
+
+  if (normalized.care_level && normalized.careLevel === undefined) {
+    normalized.careLevel = normalized.care_level;
+  }
+  if (normalized.nivel_de_cuidado && normalized.careLevel === undefined) {
+    normalized.careLevel = normalized.nivel_de_cuidado;
+  }
+  if (normalized.cuidado && normalized.careLevel === undefined) {
+    normalized.careLevel = normalized.cuidado;
+  }
+
+  if (normalized.destaque !== undefined && normalized.featured === undefined) {
+    normalized.featured = normalized.destaque;
+  }
+  if (normalized.em_destaque !== undefined && normalized.featured === undefined) {
+    normalized.featured = normalized.em_destaque;
+  }
+
+  return normalized;
+};
 
 const resolveCategory = async (parsed) => {
   const candidateId = parsed.category_id ?? parsed.categoryId;
@@ -77,7 +101,7 @@ class ProdutoService {
   }
 
   async criar(payload) {
-    const parsed = createSchema.parse(payload);
+    const parsed = createSchema.parse(normalizeProductPayload(payload));
     const categoryPayload = await resolveCategory(parsed);
     return Produto.create({
       nome: parsed.nome,
@@ -86,6 +110,7 @@ class ProdutoService {
       estoque: parsed.estoque,
       imageUrl: parsed.imageUrl || null,
       featured: parsed.featured ?? false,
+      careLevel: parsed.careLevel || 'Facil',
       ...categoryPayload,
     });
   }
@@ -94,7 +119,8 @@ class ProdutoService {
     const produto = await Produto.findByPk(id);
     if (!produto) return null;
 
-    const parsed = partial ? patchSchema.parse(payload) : createSchema.parse(payload);
+    const normalized = normalizeProductPayload(payload);
+    const parsed = partial ? patchSchema.parse(normalized) : createSchema.parse(normalized);
     let categoryPayload = {};
     if (
       parsed.category_id !== undefined ||
@@ -114,6 +140,7 @@ class ProdutoService {
         ? { imageUrl: parsed.imageUrl === '' ? null : parsed.imageUrl }
         : {}),
       ...(parsed.featured !== undefined ? { featured: parsed.featured } : {}),
+      ...(parsed.careLevel !== undefined ? { careLevel: parsed.careLevel || 'Facil' } : {}),
       ...categoryPayload,
     });
 

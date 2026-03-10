@@ -14,6 +14,8 @@ router.get('/users', adminController.listarUsuarios);
 router.delete('/users/:id', adminController.removerUsuario);
 router.patch('/users/:id/role', adminController.atualizarRole);
 router.post('/products', upload.single('image'), adminProductController.create);
+router.patch('/products/:id/destaque', adminProductController.toggleHighlight);
+router.patch('/products/:id/nivel-cuidado', adminProductController.updateCareLevel);
 router.patch('/products/:id', upload.single('image'), adminProductController.update);
 router.delete('/products/:id', adminProductController.remove);
 router.get('/store-info/cards', storeInfoCardController.list);

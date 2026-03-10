@@ -12,6 +12,16 @@ export default {
     }
   },
 
+  async publicList(req, res, next) {
+    try {
+      const storeInfo = await getStoreInfo();
+      const cards = await listCards(storeInfo.id);
+      return res.status(200).json({ data: cards, size: cards.length });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   async create(req, res, next) {
     try {
       const storeInfo = await getStoreInfo();

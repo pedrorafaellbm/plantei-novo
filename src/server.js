@@ -43,6 +43,10 @@ async function bootstrap() {
   `);
   await sequelize.query(`
     ALTER TABLE produtos
+    ADD COLUMN IF NOT EXISTS care_level VARCHAR(60) NOT NULL DEFAULT 'Facil';
+  `);
+  await sequelize.query(`
+    ALTER TABLE produtos
     ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT false;
   `);
   await sequelize.query(`

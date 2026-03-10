@@ -92,4 +92,46 @@ export default {
       return next(err);
     }
   },
+
+  async toggleHighlight(req, res, next) {
+    try {
+      const updated = await produtoService.atualizar(
+        req.params.id,
+        { featured: req.body.featured ?? true },
+        true
+      );
+      if (!updated) return res.status(404).json({ error: 'Produto nao encontrado' });
+      return res.status(200).json({ data: updated });
+    } catch (err) {
+      log.error(err);
+      return next(err);
+    }
+  },
+
+  async updateCareLevel(req, res, next) {
+    try {
+      const careLevel =
+        req.body.careLevel ??
+        req.body.care_level ??
+        req.body.nivel_de_cuidado ??
+        req.body.nivelDeCuidado ??
+        req.body.cuidado;
+
+      if (!careLevel?.toString().trim()) {
+        return res.status(400).json({ error: 'Nivel de cuidado e obrigatorio' });
+      }
+
+      const updated = await produtoService.atualizar(
+        req.params.id,
+        { careLevel },
+        true
+      );
+
+      if (!updated) return res.status(404).json({ error: 'Produto nao encontrado' });
+      return res.status(200).json({ data: updated });
+    } catch (err) {
+      log.error(err);
+      return next(err);
+    }
+  },
 };
